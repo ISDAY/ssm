@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.EmpMapper">
+    
+    <select id="findEmp" resultType="employee">
+        SELECT * FROM emp
+        <where>
+            <if test="emp_no != null and emp_no !=''">
+                emp_no = #{emp_no}
+            </if>
+            <if test="emp_name != null and emp_name !=''">
+                AND emp_name = #{emp_name}
+            </if>
+            <if test="department != null and department !=''">
+                AND department = #{department}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addEmp">
+        INSERT INTO emp(emp_no,emp_name,phone,job,salary,commission_pct,department,hiredate)
+        VALUES(#{emp_no},#{emp_name},#{phone},#{job},#{salary},#{commission_pct},#{department},#{hiredate})
+    </insert>
+
+    <update id="updateEmp">
+        UPDATE emp SET phone = #{phone}, job = #{job}, salary = #{salary}, commission_pct = #{commission_pct}, department = #{department}
+        WHERE emp_no = #{emp_no}
+    </update>
+
+    <delete id="deleteEmp">
+        DELETE FROM emp WHERE emp_no = #{emp_no}
+    </delete>
+    
+</mapper>

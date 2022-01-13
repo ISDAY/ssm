@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ccontext="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:mv="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- 包扫描，只扫描controller层 -->
+    <ccontext:component-scan base-package="com.sys.controller"></ccontext:component-scan>
+
+    <!-- 设置DispatcherServlet不拦截静态资源 -->
+    <mvc:resources mapping="/css/**" location="/css/"></mvc:resources>
+    <mvc:resources mapping="/js/**" location="/js/"></mvc:resources>
+    <mvc:resources mapping="/img/**" location="/img/"></mvc:resources>
+    <mvc:resources mapping="/fonts/**" location="/fonts/"></mvc:resources>
+
+    <!-- 开启SpringMVC的注解驱动 -->
+    <mv:annotation-driven></mv:annotation-driven>
+
+    <!-- 视图解析器 -->
+    <bean id="InternalResourceViewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/pages/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- 设置拦截器所拦截的URL -->
+            <mvc:mapping path="/mainPage/*"/>
+            <!-- 创建LoginIntercepter对象 -->
+            <bean id="LoginIntercepter" class="com.sys.intercepter.LoginIntercepter"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+</beans>

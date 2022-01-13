@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 1、读取数据库信息配置文件 -->
+    <context:property-placeholder location="classpath:db.properties"></context:property-placeholder>
+    <!-- 2、创建数据库连接池 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"></property>
+        <property name="url" value="${jdbc.url}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>
+    <!-- 3、创建SqlSessionFactoryBean对象，该对象中封装了MyBatis的配置 -->
+    <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--
+        配置数据源，本来是写在MyBatis的配置文件中的，但是整合的时候，必须写在这里
+        否则Spring会抛出异常
+        -->
+        <property name="dataSource" ref="dataSource"></property>
+        <!--
+        配置别名，也可写在mybatis的配置文件中
+        -->
+        <property name="typeAliasesPackage" value="com.sys.bean"></property>
+        <!--
+        引入MyBatis配置文件，用于引入MyBatis其他的配置
+        -->
+        <property name="configLocation" value="classpath:mybatis_config.xml">
+        </property>
+        <!--
+        当mapper接口和mappe映射文件编译后不在同一个包时，则需要使用 mapperLocations
+        指定mapper映射文件的路径。
+        这个相当于是MyBatis配置文件当中<mapper resource="..."></mapper>，只不过这里
+        采用SPEL表达式实现了批量引入
+        -->
+        <!--<property name="mapperLocations" value="classpath:mapper/*.xml">
+        </property>-->
+    </bean>
+    <!--
+    4、mapper扫描器，扫描指定包下面的mapper接口进行批量引入
+    相当于MyBatis配置文件中<package name="com.sys.mapper"/>
+    -->
+    <bean id="MapperScanner"
+          class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 设置需要被扫描的包 -->
+        <property name="basePackage" value="com.sys.mapper"></property>
+    </bean>
+    <!-- 包扫描，只需要扫描service层 -->
+    <context:component-scan base-package="com.sys.service"></context:component-scan>
+
+
+</beans>
